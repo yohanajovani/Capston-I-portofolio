@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UV Index Tracker</title>
+    <link rel="stylesheet" href="assets/style/styles.css">
+</head>
+<body>
+    <header style="background-image: url('assets/img/sun.jpg');">
+        <h1>UV Index Tracker</h1>
+        <p>Track UV index levels and protect yourself from sun exposure</p>
+    </header>
+    <main>
+        <section class="location-input">
+            <h2>Enter Your Location</h2>
+            <input type="text" id="location" placeholder="Enter your location">
+            <label for="from-date">From Date:</label>
+            <input type="date" id="from-date" name="from-date">
+            <label for="to-date">To Date:</label>
+            <input type="date" id="to-date" name="to-date">
+            <button id="track-btn">Track UV Index</button>
+        </section>
+        
+        <section class="uv-display">
+            <h2>UV Index</h2>
+            <div id="uv-info">
+                <!-- Updated Dummy Data for UV Index -->
+                <p id="uv-value">UV Index Range: 4 - 9</p>
+                <p id="update-time">Date Range: 05/5/2025To 05/5/2025</p>
+                <p id="location-info">Location: Little Rock, Arkansas</p>
+            </div>
+        </section>
+        
+        
+        </section>
+        <section class="uv-forecast">
+            <h2>UV Index Chart</h2>
+            <canvas id="uv-chart"></canvas>
+        </section>
+        <br>
+        <br>
+        <section class="tips">
+            <h2>Tips for UV Protection</h2>
+            <ul>
+                <li>UV Index Low (0-2): Wear sunglasses on bright days. If you burn easily, cover up and use broad spectrum SPF 30+ sunscreen. </li>
+                <li>UV Index Moderate to High (3-7): Cover the body with sun-protective clothing, wear a wide-brim hat, use SPF 30+ sunscreen, and wear sunglasses. </li>
+                <li>UV Index Very High to Extreme (8+): Avoid sun exposure between 10 a.m. and 4 p.m., reapply sunscreen every two hours, and wear protective clothing and sunglasses.</li>
+            </ul>
+            <br>
+            <h2>FAQs: How to Use the Webpage</h2>
+            <ul>
+                <li> Users can see an option to enter their location at the top of this page. They can type in their address or allow the webpage to access their device’s location services for automatic location detection.  </li>
+                <li> Users can select the date range for which they wish to view the UV index data. They can choose current dates for real-time data or select past/future dates to plan their activities accordingly. </li>
+                <li> After entering the necessary information, users must press the 'Track UV Index' button. The webpage will display the UV index forecast for their specified location and date range on an interactive chart. </li>
+                <li> Users can interact with the chart to view specific data points. They can hover over on the colored indicators to get detailed information. </li>
+
+            </ul>
+        </section>
+
+        <section class="user-feedback">
+            <h2>User Feedback</h2>
+            <form id="feedback-form">
+                <label for="user-name">Name:</label>
+                <input type="text" id="user-name" name="user-name" placeholder="Your name" required>
+                <br>
+                <label for="user-email">Email:</label>
+                <input type="email" id="user-email" name="user-email" placeholder="Your email" required>
+                <br>
+                <label for="feedback">Feedback:</label>
+                <textarea id="feedback" name="feedback" rows="4" placeholder="Your feedback" required></textarea>
+                <br>
+                <button type="submit">Submit Feedback</button>
+            </form>
+        </section>
+     
+    </main>
+    <footer>
+        <p>&copy; 2025 UV Index Tracker. All rights reserved.</p>
+        <p>Contact: yjmehari@ualr.edu</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <script src="assets/img/script/script.js"></script>
+    <script>
+        // Updated Dummy data for UV Index Chart with Color-Coded Indicators
+        // Example of updated uvData with hourly data points (dummy data)
+        const uvData = {
+            labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'], // Hourly labels for one day
+            datasets: [{
+                label: 'UV Index',
+                backgroundColor: 'rgba(255, 165, 0, 0.2)', // Use a single color for simplicity or create an array for color-coding each hour
+                borderColor: 'rgba(255, 165, 0, 1)',
+                pointStyle: 'circle',
+                pointRadius: 5,
+                pointHoverRadius: 5,
+                data: [0, 0, 0, 0, 0, 0, 1, 2, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 1, 0, 0, 0, 0, 0], // Hourly UV Index data points for one day
+            }]
+        };
+
+        // Update the config object to reflect the new data
+        const config = {
+            type: 'line',
+            data: uvData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        suggestedMax: 11
+                    },
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'hour'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: true,
+                        callbacks: {
+                            title: function(context) {
+                                return context[0].label;
+                            },
+                            label: function(context) {
+                                let uvIndex = context.parsed.y;
+                                let riskLevel = '';
+                                if (uvIndex >= 0 && uvIndex <= 2) {
+                                    riskLevel = 'Low';
+                                } else if (uvIndex >= 3 && uvIndex <= 5) {
+                                    riskLevel = 'Moderate';
+                                } else if (uvIndex >= 6 && uvIndex <= 7) {
+                                    riskLevel = 'High';
+                                } else if (uvIndex >= 8 && uvIndex <= 10) {
+                                    riskLevel = 'Very High';
+                                } else if (uvIndex >= 11) {
+                                    riskLevel = 'Extreme';
+                                }
+                                return `UV Index: ${uvIndex} (${riskLevel})`;
+                            }
+                        }
+                    },
+                    annotation: {
+                        annotations: {
+                            greenZone: {
+                                type: 'box',
+                                yMin: 0,
+                                yMax: 2,
+                                backgroundColor: 'rgba(0, 128, 0, 0.3)'
+                            },
+                            yellowZone: {
+                                type: 'box',
+                                yMin: 3,
+                                yMax: 5,
+                                backgroundColor: 'rgba(255, 255, 0, 0.3)'
+                            },
+                            orangeZone: {
+                                type: 'box',
+                                yMin: 6,
+                                yMax: 7,
+                                backgroundColor: 'rgba(255, 165, 0, 0.3)'
+                            },
+                            redZone: {
+                                type: 'box',
+                                yMin: 8,
+                                yMax: 10,
+                                backgroundColor: 'rgba(255, 0, 0, 0.3)'
+                            },
+                            purpleZone: {
+                                type: 'box',
+                                yMin: 11,
+                                yMax: 'max',
+                                backgroundColor: 'rgba(128, 0, 128, 0.3)'
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Initialize the chart with the updated configuration
+        const uvChart = new Chart(
+            document.getElementById('uv-chart'),
+            config
+        );
+
+    </script>
+
+
+</body>
+</html>
+
